@@ -1,0 +1,5 @@
+{
+  "name": "Trasteros Portal Cliente",
+  "description": "Mobile-first customer portal for storage unit management, payments, and rentals connected to Supabase.",
+  "requestFramePermissions": []
+}

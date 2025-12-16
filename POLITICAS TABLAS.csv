@@ -1,0 +1,32 @@
+schemaname,tablename,policyname,permissive,roles,cmd,qual,with_check
+public,client_ratings,client_ratings_insert,PERMISSIVE,{authenticated},INSERT,null,true
+public,client_ratings,client_ratings_select,PERMISSIVE,{authenticated},SELECT,true,null
+public,client_ratings,insert_auth,PERMISSIVE,{authenticated},INSERT,null,true
+public,client_ratings,select_auth,PERMISSIVE,{authenticated},SELECT,true,null
+public,clients,auth read clients,PERMISSIVE,{public},SELECT,(auth.uid() IS NOT NULL),null
+public,clients,auth write clients,PERMISSIVE,{public},ALL,(auth.uid() IS NOT NULL),(auth.uid() IS NOT NULL)
+public,clients,clients_select_auth,PERMISSIVE,{authenticated},SELECT,true,null
+public,crm_contacts,auth read crm_contacts,PERMISSIVE,{public},SELECT,(auth.uid() IS NOT NULL),null
+public,crm_contacts,auth write crm_contacts,PERMISSIVE,{public},ALL,(auth.uid() IS NOT NULL),(auth.uid() IS NOT NULL)
+public,crm_contacts,crm del,PERMISSIVE,{public},DELETE,(auth.role() = 'authenticated'::text),null
+public,crm_contacts,crm ins,PERMISSIVE,{public},INSERT,null,(auth.role() = 'authenticated'::text)
+public,crm_contacts,crm sel,PERMISSIVE,{public},SELECT,(auth.role() = 'authenticated'::text),null
+public,crm_contacts,crm upd,PERMISSIVE,{public},UPDATE,(auth.role() = 'authenticated'::text),null
+public,incidents,incidents_delete,PERMISSIVE,{authenticated},DELETE,true,null
+public,incidents,incidents_insert,PERMISSIVE,{authenticated},INSERT,null,true
+public,incidents,incidents_read,PERMISSIVE,{authenticated},SELECT,true,null
+public,incidents,incidents_update,PERMISSIVE,{authenticated},UPDATE,true,true
+public,invoices,auth read invoices,PERMISSIVE,{public},SELECT,(auth.uid() IS NOT NULL),null
+public,invoices,auth write invoices,PERMISSIVE,{public},ALL,(auth.uid() IS NOT NULL),(auth.uid() IS NOT NULL)
+public,payments,auth read payments,PERMISSIVE,{public},SELECT,(auth.uid() IS NOT NULL),null
+public,payments,auth write payments,PERMISSIVE,{public},ALL,(auth.uid() IS NOT NULL),(auth.uid() IS NOT NULL)
+public,rentals,auth read rentals,PERMISSIVE,{public},SELECT,(auth.uid() IS NOT NULL),null
+public,rentals,auth write rentals,PERMISSIVE,{public},ALL,(auth.uid() IS NOT NULL),(auth.uid() IS NOT NULL)
+public,settings,auth read settings,PERMISSIVE,{public},SELECT,(auth.uid() IS NOT NULL),null
+public,settings,auth write settings,PERMISSIVE,{public},ALL,(auth.uid() IS NOT NULL),(auth.uid() IS NOT NULL)
+public,units,auth delete units,PERMISSIVE,{public},DELETE,(auth.role() = 'authenticated'::text),null
+public,units,auth insert units,PERMISSIVE,{public},INSERT,null,(auth.role() = 'authenticated'::text)
+public,units,auth read units,PERMISSIVE,{public},SELECT,(auth.uid() IS NOT NULL),null
+public,units,auth update units,PERMISSIVE,{public},UPDATE,(auth.role() = 'authenticated'::text),null
+public,units,auth write units,PERMISSIVE,{public},ALL,(auth.uid() IS NOT NULL),(auth.uid() IS NOT NULL)
+public,units,units_select_auth,PERMISSIVE,{authenticated},SELECT,true,null
