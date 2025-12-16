@@ -24,12 +24,11 @@ export const rentalsService = {
       };
     }
     const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return null;
-    // Buscar el client_id asociado al usuario autenticado
+    if (!user || !user.email) return null;
     const { data: client, error: clientError } = await supabase
       .from('clients')
       .select('id')
-      .eq('auth_user_id', user.id)
+      .ilike('email', user.email)
       .maybeSingle();
     if (clientError || !client) return null;
     // Buscar el rental activo de ese cliente
@@ -40,6 +39,13 @@ export const rentalsService = {
       .eq('status', 'Activo')
       .maybeSingle();
     if (error && error.code !== 'PGRST116') throw error;
+    if (data?.unit) {
+      data.unit = {
+        ...data.unit,
+        name: data.unit.name ?? `Trastero ${data.unit.code}`,
+        price_monthly: data.unit.price ?? data.unit.price_monthly
+      };
+    }
     return data as Rental;
   },
 
@@ -50,7 +56,7 @@ export const rentalsService = {
     }
     const { error } = await supabase
       .from('rentals')
-      .update({ status: 'Pendiente', cancellation_reason: reason })
+      .update({ status: 'Pendiente' })
       .eq('id', rentalId);
     if (error) throw error;
   },

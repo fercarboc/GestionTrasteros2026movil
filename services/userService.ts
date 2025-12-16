@@ -1,8 +1,18 @@
 import { supabase } from '../lib/supabaseClient';
-import { Client, RentalHistory, Rental, Unit } from '../types';
+import { Client, RentalHistory } from '../types';
+
+const findClientByEmail = async (email?: string | null): Promise<Client | null> => {
+  if (!email) return null;
+  const { data, error } = await supabase
+    .from('clients')
+    .select('*')
+    .ilike('email', email)
+    .maybeSingle();
+  if (error && error.code !== 'PGRST116') throw error;
+  return (data as Client) ?? null;
+};
 
 export const userService = {
-  // Busca el client por auth_user_id
   getProfile: async (): Promise<Client | null> => {
     const isDemo = localStorage.getItem('demo_mode') === 'true';
     
@@ -10,11 +20,11 @@ export const userService = {
       return {
         id: 'demo-client-123',
         name: 'Juan',
-        surname: 'Pérez García',
+        surname: 'Perez Garcia',
         phone: '600 123 456',
         email: 'demo@trasteros.com',
         dni: 'X123456Z',
-        address: 'C/ Mayor 123, 2ºA',
+        address: 'C/ Mayor 123, 2A',
         city: 'Madrid',
         postal_code: '28001',
         province: 'Madrid',
@@ -27,18 +37,9 @@ export const userService = {
 
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return null;
-
-    // Buscar el client por auth_user_id
-    const { data } = await supabase
-      .from('clients')
-      .select('*')
-      .eq('auth_user_id', user.id)
-      .maybeSingle();
-    if (!data) return null;
-    return data as Client;
+    return await findClientByEmail(user.email);
   },
 
-  // Devuelve el historial de rentals del cliente autenticado
   getRentalHistory: async (): Promise<RentalHistory[]> => {
     const isDemo = localStorage.getItem('demo_mode') === 'true';
 
@@ -50,22 +51,17 @@ export const userService = {
       ];
     }
 
-    // Real DB fetch
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return [];
-    // Buscar el client_id
-    const { data: client } = await supabase
-      .from('clients')
-      .select('id')
-      .eq('auth_user_id', user.id)
-      .maybeSingle();
+    const client = await findClientByEmail(user.email);
     if (!client) return [];
-    // Buscar rentals históricos
+
     const { data: rentals } = await supabase
       .from('rentals')
       .select('id, start_date, end_date, status, unit:units(code, size_m2)')
       .eq('client_id', client.id)
       .order('start_date', { ascending: false });
+
     return rentals?.map((r: any) => ({
       id: r.id,
       unit_code: r.unit?.code,
